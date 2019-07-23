@@ -1,0 +1,78 @@
+<head>
+</head>
+<body>
+
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script>
+
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+
+	 
+<!-- Add Firebase products that you want to use -->
+<script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js"></script>
+
+<script src=".firebase-config.js"></script>
+
+
+<script>
+//obtendo o database
+var db = firebase.database();
+
+//inserindo um usuarios
+function insertUsuario(nome, datanasc) {
+	//obtendo um id
+	var id = db.ref().child('usuarios').push().key;
+	
+	db.ref('usuarios/'+id ).set(
+		{
+			nome: nome,
+			datanascimento: datanasc
+		},
+		//adicionando uma função após a inserção
+		function(error) {
+			if (error) {
+				alert("Erro ao inserir dados!");
+			} else {
+				alert("Dados inseridos como sucesso");
+			} 
+		}
+	);
+  
+  return id;
+}
+
+//obter um usuário pelo nome
+function getUsuario(nome) {
+ 
+   db.ref("usuarios").orderByChild("nome")
+  .equalTo(nome).limitToFirst(1).on("child_added",
+	function (snapshot) {
+      var value = snapshot.val();
+	  console.log(value.nome);
+	}
+  );
+  
+}
+
+//obter todos os usuários
+function getUsuarios() {
+  
+  let event = firebase.database().ref("usuarios")
+  let query = event.orderByChild("nome").on("child_added",
+	function (snapshot) {
+      var value = snapshot.val();
+	  console.log(value.nome);
+	}
+  );
+  
+}
+
+getUsuario("Luis Araujo");
+getUsuarios();
+
+</script>
+</body>
