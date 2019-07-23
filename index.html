@@ -1,7 +1,73 @@
 <head>
 <title>Teste Firebase</title>
+<style>
+.container{
+	width: 300px;
+	margin-top: 10px;
+	border: solid 1px #aaa;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+.label{
+	display: block;
+	font-family: Roboto;
+}
+
+.btn{
+	margin-top: 10px;
+	display: block;
+	font-family: Roboto;
+	background-color: #ddd;
+	border: none;
+	border-radius: 2px;
+	padding: 5px;
+}
+
+.head{
+	border-radius: 3px;
+	background-color: #ddd;
+	padding-bottom: 5px;
+	padding-top: 5px;
+	text-align: center;
+}
+
+.result{
+	display: block;
+	border-left: 3px solid #aaa;
+	padding-left: 2px;
+	margin-top: 2px;
+}
+</style>
 </head>
 <body>
+<h3>Teste de Persitência Utilizando Firebase</h3>
+
+<div class="container" id="container-send-data">
+	<div class="head" >Inserir Usuário</div>
+	<span class="label">Nome</span>
+	<input id="inp-nome" type="text"></input>
+	<span class="label">Nome</span>
+	<input id="inp-date" type="date"></input>
+	<button class="btn" id="bt-send">Enviar</button>
+</div>
+
+
+<div class="container" id="container-getall-data">
+	<div class="head" >Buscar Usuário</div>
+	<span class="label">Nome</span>
+	<input id="inp-nome2" value="Luis Araujo" type="text"></input>
+	<div id="all-result">
+		
+	</div>
+	<button class="btn" id="bt-find">Buscar</button>
+</div>
+
+
+
+
+
+
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script>
@@ -29,6 +95,7 @@ var db = firebase.database();
 
 //inserindo um usuarios
 function insertUsuario(nome, datanasc) {
+console.log(datanasc);
 	//obtendo um id
 	var id = db.ref().child('usuarios').push().key;
 	
@@ -51,33 +118,52 @@ function insertUsuario(nome, datanasc) {
 }
 
 //obter um usuário pelo nome
-function getUsuario(nome) {
- 
+function getUsuario(nome, callback) {
    db.ref("usuarios").orderByChild("nome")
   .equalTo(nome).limitToFirst(1).on("child_added",
 	function (snapshot) {
       var value = snapshot.val();
-	  console.log(value.nome);
+	  callback(value);
 	}
   );
   
 }
 
 //obter todos os usuários
-function getUsuarios() {
+function getUsuarios(callback) {
   
   let event = firebase.database().ref("usuarios")
   let query = event.orderByChild("nome").on("child_added",
 	function (snapshot) {
       var value = snapshot.val();
-	  console.log(value.nome);
+	  callback(value.nome);
 	}
   );
   
 }
 
-getUsuario("Luis Araujo");
-getUsuarios();
+btsend = document.getElementById("bt-send");
+btfind = document.getElementById("bt-find");
+
+btsend.addEventListener("click", function(){
+	nome = document.getElementById("inp-nome").value;
+	data = document.getElementById("inp-date").value;
+	insertUsuario(nome, data);
+});
+
+btfind.addEventListener("click", function(){
+	nome = document.getElementById("inp-nome2").value;
+	getUsuario(nome, function(value){
+		result = document.getElementById("all-result");
+		result.innerHTML = "";
+		spam = document.createElement("span");
+		spam.innerHTML = value.nome+ " - " +value.datanascimento;
+		spam.classList.add("result");
+		result.appendChild(spam);
+	});
+});
+
+
 
 </script>
 </body>
