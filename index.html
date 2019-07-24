@@ -1,53 +1,17 @@
 <head>
 <title>Teste Firebase</title>
-<style>
-.container{
-	width: 300px;
-	margin-top: 10px;
-	border: solid 1px #aaa;
-	border-radius: 5px;
-	padding: 5px;
-}
-
-.label{
-	display: block;
-	font-family: Roboto;
-}
-
-.btn{
-	margin-top: 10px;
-	display: block;
-	font-family: Roboto;
-	background-color: #ddd;
-	border: none;
-	border-radius: 2px;
-	padding: 5px;
-}
-
-.head{
-	border-radius: 3px;
-	background-color: #ddd;
-	padding-bottom: 5px;
-	padding-top: 5px;
-	text-align: center;
-}
-
-.result{
-	display: block;
-	border-left: 3px solid #aaa;
-	padding-left: 2px;
-	margin-top: 2px;
-}
-</style>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
 </head>
 <body>
-<h3>Teste de Persitência Utilizando Firebase</h3>
-
+<div class="title">
+	<h3>Teste de Persitência Utilizando Firebase <img src="firebase-icon.png"></h3>
+</div>
 <div class="container" id="container-send-data">
 	<div class="head" >Inserir Usuário</div>
 	<span class="label">Nome</span>
 	<input id="inp-nome" type="text"></input>
-	<span class="label">Nome</span>
+	<span class="label">Data Nascimento</span>
 	<input id="inp-date" type="date"></input>
 	<button class="btn" id="bt-send">Enviar</button>
 </div>
@@ -61,109 +25,24 @@
 		
 	</div>
 	<button class="btn" id="bt-find">Buscar</button>
+	<button class="btn" id="bt-find-all">Buscar Todos</button>
+	<button class="btn" id="bt-find-start">Buscar Começa Com</button>
 </div>
-
-
-
-
-
 
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script>
-
-
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#config-web-app -->
-
 	 
 <!-- Add Firebase products that you want to use -->
 <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-database.js"></script>
 
 <!--
-Esse aquivo não está do repositório.
-
-Solicite seu objeto de configuração do Firebase 
+Esse aquivo não está do repositório. Solicite seu objeto de configuração do Firebase 
 https://firebase.google.com/docs/web/setup?hl=pt-br#obtain-config-object 
 -->
 
 <script src="firebase-config.js"></script>
-
-<script>
-//obtendo o database
-var db = firebase.database();
-
-//inserindo um usuarios
-function insertUsuario(nome, datanasc) {
-console.log(datanasc);
-	//obtendo um id
-	var id = db.ref().child('usuarios').push().key;
-	
-	db.ref('usuarios/'+id ).set(
-		{
-			nome: nome,
-			datanascimento: datanasc
-		},
-		//adicionando uma função após a inserção
-		function(error) {
-			if (error) {
-				alert("Erro ao inserir dados!");
-			} else {
-				alert("Dados inseridos como sucesso");
-			} 
-		}
-	);
-  
-  return id;
-}
-
-//obter um usuário pelo nome
-function getUsuario(nome, callback) {
-   db.ref("usuarios").orderByChild("nome")
-  .equalTo(nome).limitToFirst(1).on("child_added",
-	function (snapshot) {
-      var value = snapshot.val();
-	  callback(value);
-	}
-  );
-  
-}
-
-//obter todos os usuários
-function getUsuarios(callback) {
-  
-  let event = firebase.database().ref("usuarios")
-  let query = event.orderByChild("nome").on("child_added",
-	function (snapshot) {
-      var value = snapshot.val();
-	  callback(value.nome);
-	}
-  );
-  
-}
-
-btsend = document.getElementById("bt-send");
-btfind = document.getElementById("bt-find");
-
-btsend.addEventListener("click", function(){
-	nome = document.getElementById("inp-nome").value;
-	data = document.getElementById("inp-date").value;
-	insertUsuario(nome, data);
-});
-
-btfind.addEventListener("click", function(){
-	nome = document.getElementById("inp-nome2").value;
-	getUsuario(nome, function(value){
-		result = document.getElementById("all-result");
-		result.innerHTML = "";
-		spam = document.createElement("span");
-		spam.innerHTML = value.nome+ " - " +value.datanascimento;
-		spam.classList.add("result");
-		result.appendChild(spam);
-	});
-});
+<script src="main.js"></script>
 
 
-
-</script>
 </body>
